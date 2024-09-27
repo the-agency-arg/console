@@ -64,13 +64,22 @@
                 inputField.value = '';
     
                 // Send the command to the Flask app via a POST request
-                fetch('https://tunnel.agent000.agency/send_command', {
+                fetch('http://127.0.0.1:5000/send_command', {
                     method: 'POST',
+                    mode: 'cors',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ command: command , location: userLocation})
                 })
+                // fetch('https://tunnel.agent000.agency/send_command', {
+                //     method: 'POST',
+                //     mode: 'no-cors',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //     },
+                //     body: JSON.stringify({ command: command , location: userLocation})
+                // })
                 .then(response => response.json())
                 .then(data => {
                     userLocation = data.location || userLocation;

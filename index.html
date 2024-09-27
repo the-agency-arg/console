@@ -64,7 +64,7 @@
                 inputField.value = '';
     
                 // Send the command to the Flask app via a POST request
-                fetch('http://127.0.0.1:5000/send_command', {
+                fetch('https://tunnel.agent000.agency/send_command', {
                     method: 'POST',
                     mode: 'cors',
                     headers: {

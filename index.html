@@ -41,6 +41,8 @@
         const inputField = document.getElementById('cmd-input');
         
         let userLocation = 'home';
+        let username = '';
+        let password = '';
 
         // Function to escape HTML characters
         function escapeHTML(str) {
@@ -70,11 +72,13 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ command: command , location: userLocation})
+                    body: JSON.stringify({ command: command , location: userLocation, username: username, password:password})
                 })
                 .then(response => response.json())
                 .then(data => {
                     userLocation = data.location || userLocation;
+                    username = data.username || username;
+                    password = data.password || password;
                     // Append the response from the server to the command box
                     const escapedResponse = (data.response);
                     cmdBox.innerHTML += `<div>${escapedResponse}</div>`;

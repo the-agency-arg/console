@@ -1,20 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Upload a File</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Console</title>
+    <style>
+        body {
+            font-family: monospace;
+            background-color: #121212;
+            color: #00ff00;
+        }
+        #cmd {
+            background-color: #000;
+            color: #00ff00;
+            width: 100%;
+            height: 400px;
+            overflow-y: scroll;
+            padding: 10px;
+            border: none;
+            resize: none;
+            outline: none;
+        }
+        input {
+            width: 100%;
+            background-color: #000;
+            color: #00ff00;
+            border: none;
+            outline: none;
+            font-family: monospace;
+            padding: 5px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Upload Your File</h1>
-  <form action="https://tunnel.agent000.agency/upload" method="POST" enctype="multipart/form-data">
-    <input type="email" name="email" placeholder="Your email" required><br><br>
-    <input type="password" name="password" placeholder="Password" required><br><br>
-    <input type="file" name="file" required><br><br>
-    <button type="submit">Upload</button>
-</form>
+    <div id="cmd" contenteditable="false"></div>
+    <input id="cmd-input" type="text" placeholder="Type a command or 'help' and press Enter" autofocus>
 
-  {% if message %}
-    <p style="color: red;">{{ message }}</p>
-  {% endif %}
+    <script>
+        const cmdBox = document.getElementById('cmd');
+        const inputField = document.getElementById('cmd-input');
+        
+        let userLocation = 'home';
+        let username = '';
+        let password = '';
+
+        // Function to escape HTML characters
+        function escapeHTML(str) {
+            return str.replace(/&/g, '&amp;')
+                      .replace(/</g, '&lt;')
+                      .replace(/>/g, '&gt;')
+                      .replace(/"/g, '&quot;')
+                      .replace(/'/g, '&#039;');
+        }
+    
+        inputField.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent newline in input box
+                const command = inputField.value;
+    
+                // Escape HTML before displaying in cmdBox
+                const escapedCommand = escapeHTML(command);
+                cmdBox.innerHTML += `<div>>> ${escapedCommand}</div>`;
+                
+                // Clear the input field
+                inputField.value = '';
+    
+                // Send the command to the Flask app via a POST request
+                fetch('https://tunnel.agent000.agency/send_command', {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ command: command , location: userLocation, username: username, password:password})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    userLocation = data.location || userLocation;
+                    username = data.username || username;
+                    password = data.password || password;
+                    // Append the response from the server to the command box
+                    const escapedResponse = (data.response);
+                    cmdBox.innerHTML += `<div>${escapedResponse}</div>`;
+                    
+                    // Auto-scroll to the bottom of the command box
+                    cmdBox.scrollTop = cmdBox.scrollHeight;
+                    if(data.openLink){
+                        window.open(data.openLink, "_blank");
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
